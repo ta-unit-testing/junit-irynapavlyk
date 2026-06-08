@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -128,15 +129,25 @@ class BookManagerTest {
     // ===== listAuthorsByYear() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має повертати авторів для конкретного року")
+        // Реалізувати тест - має повертати авторів для конкретного року")
     void shouldReturnAuthorsForSpecificYear() {
-        fail("Not implemented yet");
+        int year = 2021;
+
+        List<String> authors = bookManager.listAuthorsByYear(year);
+
+        // Assert
+        assertEquals(1, authors.size());
+        assertTrue(authors.contains("Bob Smith"));
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має повертати порожній список для року без книг")
+        // Реалізувати тест - має повертати порожній список для року без книг")
     void shouldReturnEmptyListForYearWithNoBooks() {
-        fail("Not implemented yet");
+        int year = 2000;
+
+        List<String> authors = bookManager.listAuthorsByYear(year);
+
+        assertTrue(authors.isEmpty());
     }
 
     @Test
@@ -154,9 +165,14 @@ class BookManagerTest {
     // ===== findBookByAuthor() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має знайти першу книгу існуючого автора")
+        //Реалізувати тест - має знайти першу книгу існуючого автора")
     void shouldFindFirstBookByExistingAuthor() {
-        fail("Not implemented yet");
+        String author = "Alice Johnson";
+
+        Optional<Book> book = bookManager.findBookByAuthor(author);
+        String title = book.get().getTitle();
+
+        assertEquals("The Great Adventure", title);
     }
 
     @Test
@@ -178,23 +194,41 @@ class BookManagerTest {
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має кинути виключення для blank автора")
+        // Реалізувати тест - має кинути виключення для blank автора")
     void shouldThrowExceptionWhenAuthorIsBlank() {
-        fail("Not implemented yet");
+        assertThrows(IllegalArgumentException.class, () -> bookManager.findBookByAuthor(""));
     }
 
     // ===== findBooksByYear() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має знайти всі книги за роком")
+        // Реалізувати тест - має знайти всі книги за роком")
     void shouldFindAllBooksByYear() {
-        fail("Not implemented yet");
+        bookManager.addBook(new Book("Kobzar", "Taras Shevchenko", "Poems", 1840));
+        bookManager.addBook(new Book("The Old Curiosity Shop", "Charles Dickens", "Novel", 1840));
+        bookManager.addBook(new Book("Master Humphrey's Clock", "Charles Dickens", "Novel", 1840));
+        int year = 1840;
+
+        List<Book> books = bookManager.findBooksByYear(year);
+        String title1 = books.get(0).getTitle();
+        String title2 = books.get(1).getTitle();
+        String title3 = books.get(2).getTitle();
+
+        assertEquals(3, books.size());
+        assertEquals("Kobzar", title1);
+        assertEquals("The Old Curiosity Shop", title2);
+        assertEquals("Master Humphrey's Clock", title3);
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має повертати порожній список якщо немає книг за роком")
+        // Реалізувати тест - має повертати порожній список якщо немає книг за роком")
     void shouldReturnEmptyListWhenNoBooksByYear() {
-        fail("Not implemented yet");
+        int year = 1899;
+
+        List<Book> books = bookManager.findBooksByYear(year);
+
+        assertTrue(books.isEmpty());
+        assertEquals(0, books.size());
     }
 
     @Test
@@ -206,9 +240,14 @@ class BookManagerTest {
     // ===== findBooksByGenre() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має знайти всі книги за жанром")
+        // Реалізувати тест - має знайти всі книги за жанром")
     void shouldFindAllBooksByGenre() {
-        fail("Not implemented yet");
+        String genre = "Drama";
+
+        List<Book> books = bookManager.findBooksByGenre(genre);
+
+        assertEquals(2, books.size());
+
     }
 
     @Test
@@ -224,23 +263,43 @@ class BookManagerTest {
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має кинути виключення якщо жанр null")
+        // Реалізувати тест - має кинути виключення якщо жанр null")
     void shouldThrowExceptionWhenGenreIsNullInFind() {
-        fail("Not implemented yet");
+        String genre = null;
+
+        assertThrows(IllegalArgumentException.class, () -> bookManager.findBooksByGenre(genre));
     }
 
     // ===== removeBooksByAuthor() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має видалити всі книги автора")
+        //TODO: Реалізувати тест - має видалити всі книги автора")
     void shouldRemoveAllBooksByAuthor() {
-        fail("Not implemented yet");
+        String author = "Alice Johnson";
+
+        bookManager.removeBooksByAuthor(author);
+        List<String> authors = bookManager.listOfAllAuthors();
+
+
+        assertEquals(2, bookManager.listOfAllAuthors().size());
+        assertEquals("Bob Smith", authors.get(0));
+        assertEquals("Charlie Brown", authors.get(1));
+        assertFalse(authors.contains(author));
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - не має робити нічого при видаленні неіснуючого автора")
+        //Реалізувати тест - не має робити нічого при видаленні неіснуючого автора")
     void shouldDoNothingWhenRemovingNonExistingAuthor() {
-        fail("Not implemented yet");
+        assertEquals(4, bookManager.size());
+
+        try {
+            bookManager.removeBooksByAuthor("Lesia Ukrainka");
+        } catch (RuntimeException e) {
+            System.out.println("Error: " + e.getMessage());
+            assertNull(e.getMessage());
+        }
+
+        assertEquals(4, bookManager.size());
     }
 
     @Test
@@ -252,21 +311,39 @@ class BookManagerTest {
     // ===== sortBooksByCriterion() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має відсортувати книги за назвою")
+        // Реалізувати тест - має відсортувати книги за назвою")
     void shouldSortBooksByTitle() {
-        fail("Not implemented yet");
+        bookManager.sortBooksByCriterion("title");
+        List<Book> books = bookManager.getBooks();
+
+        assertEquals("Life's Journey", books.get(0).getTitle());
+        assertEquals("Science Explained", books.get(1).getTitle());
+        assertEquals("Space Odyssey", books.get(2).getTitle());
+        assertEquals("The Great Adventure", books.get(3).getTitle());
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має відсортувати книги за автором")
+        // Реалізувати тест - має відсортувати книги за автором")
     void shouldSortBooksByAuthor() {
-        fail("Not implemented yet");
+        bookManager.sortBooksByCriterion("author");
+        List<Book> books = bookManager.getBooks();
+
+        assertEquals("Alice Johnson", books.get(0).getAuthor());
+        assertEquals("Alice Johnson", books.get(1).getAuthor());
+        assertEquals("Bob Smith", books.get(2).getAuthor());
+        assertEquals("Charlie Brown", books.get(3).getAuthor());
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має відсортувати книги за роком")
+        // Реалізувати тест - має відсортувати книги за роком")
     void shouldSortBooksByYear() {
-        fail("Not implemented yet");
+        bookManager.sortBooksByCriterion("year");
+        List<Book> books = bookManager.getBooks();
+
+        assertEquals(2019, books.get(0).getPublicationYear());
+        assertEquals(2021, books.get(1).getPublicationYear());
+        assertEquals(2022, books.get(2).getPublicationYear());
+        assertEquals(2024, books.get(3).getPublicationYear());
     }
 
     @Test
@@ -278,15 +355,33 @@ class BookManagerTest {
     // ===== mergeCollections() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має об'єднати колекції без дублікатів")
+        // Реалізувати тест - має об'єднати колекції без дублікатів")
     void shouldMergeNonDuplicateBooks() {
-        fail("Not implemented yet");
+        List<Book> books2 = List.of(
+                new Book("New Book", "Diana Green", "Drama", 2023),
+                new Book("Abc test", "Test test", "Drama", 2023),
+                new Book("The Great Adventure", "Alice Johnson", "Drama", 2022)
+        );
+
+        bookManager.mergeCollections(books2);
+
+        assertEquals(6, bookManager.size());
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має пропустити дублікати при об'єднанні")
+        // Реалізувати тест - має пропустити дублікати при об'єднанні")
     void shouldSkipDuplicateBooksWhenMerging() {
-        fail("Not implemented yet");
+        List<Book> books2 = List.of(
+                new Book("New Book", "Diana Green", "Drama", 2023),
+                new Book("Abc test", "Test test", "Drama", 2023),
+                new Book("The Great Adventure", "Alice Johnson", "Drama", 2022)
+        );
+
+        bookManager.mergeCollections(books2);
+        List<Book> bookByTitle = bookManager.findBooksByTitle("The Great Adventure");
+
+        assertEquals(6, bookManager.size());
+        assertEquals(1, bookByTitle.size());
     }
 
     @Test
@@ -296,23 +391,40 @@ class BookManagerTest {
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має пропускати null книги в колекції")
+        // Реалізувати тест - має пропускати null книги в колекції")
     void shouldSkipNullBooksInCollection() {
-        fail("Not implemented yet");
+        List<Book> listBeforeChanges = bookManager.getBooks();
+
+        try {
+            bookManager.addBook(null);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        List<Book> listAfterChanges = bookManager.getBooks();
+
+        assertTrue(listBeforeChanges.size() == listAfterChanges.size());
     }
 
     // ===== subCollectionByGenre() tests =====
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має повернути підколекцію за жанром")
+        // Реалізувати тест - має повернути підколекцію за жанром")
     void shouldReturnSubCollectionByGenre() {
-        fail("Not implemented yet");
+        String genre = "Drama";
+        List<Book> collectionByGenre = bookManager.findBooksByGenre(genre);
+
+        assertEquals(2, collectionByGenre.size());
     }
 
     @Test
-    @Disabled("TODO: Реалізувати тест - має повернути порожню підколекцію для неіснуючого жанру")
+        // Реалізувати тест - має повернути порожню підколекцію для неіснуючого жанру")
     void shouldReturnEmptySubCollectionForNonExistingGenre() {
-        fail("Not implemented yet");
+        String genre = "Poem";
+        List<Book> collectionByGenre = bookManager.findBooksByGenre(genre);
+
+        assertEquals(0, collectionByGenre.size());
+        assertTrue(collectionByGenre.isEmpty());
     }
 
     @Test
@@ -349,27 +461,62 @@ class BookManagerTest {
     // ===== Додаткові тести (заглушки для майбутньої реалізації) =====
 
     @Test
-    @Disabled("TODO: Додати тест на case-insensitive порівняння при пошуку автора")
+        // Додати тест на case-insensitive порівняння при пошуку автора")
     void shouldFindBookByAuthorCaseInsensitive() {
-        fail("Not implemented yet");
+        String author = "BOB SMITH";
+        Optional<Book> books = bookManager.findBookByAuthor(author);
+
+        assertEquals("Bob Smith", books.get().getAuthor());
     }
 
     @Test
-    @Disabled("TODO: Додати тест на збереження порядку після merge")
+        // TODO: Додати тест на збереження порядку після merge")
     void shouldPreserveOrderAfterMerge() {
-        fail("Not implemented yet");
+        bookManager.sortBooksByCriterion("title");
+
+        List<Book> books2 = List.of(
+                new Book("Book", "Diana Green", "Drama", 2023),
+                new Book("Abc test", "Test test", "Drama", 2023)
+        );
+
+        bookManager.mergeCollections(books2);
+
+        List<Book> books = bookManager.getBooks();
+
+        assertEquals(6, bookManager.size());
+        assertEquals("Life's Journey", books.get(0).getTitle());
+        assertEquals("Science Explained", books.get(1).getTitle());
+        assertEquals("Space Odyssey", books.get(2).getTitle());
+        assertEquals("The Great Adventure", books.get(3).getTitle());
+        assertEquals("Book", books.get(4).getTitle());
+        assertEquals("Abc test", books.get(5).getTitle());
+
     }
 
     @Test
-    @Disabled("TODO: Додати тест на роботу з порожніми strings у Book")
+        // Додати тест на роботу з порожніми strings у Book")
     void shouldHandleEmptyStringsInBook() {
-        fail("Not implemented yet");
+        List<Book> books2 = List.of(
+                new Book("", "", "", 2023));
+
+        bookManager.mergeCollections(books2);
+
+        List<Book> books = bookManager.getBooks();
+
+        assertEquals(5, bookManager.size());
+        assertEquals("", books.get(4).getTitle());
+        assertEquals("", books.get(4).getAuthor());
+        assertEquals("", books.get(4).getGenre());
     }
 
     @Test
-    @Disabled("TODO: Додати тест на перевірку, що listOfAllAuthors не повертає null")
+        // Додати тест на перевірку, що listOfAllAuthors не повертає null")
     void shouldNeverReturnNullFromListOfAllAuthors() {
-        fail("Not implemented yet");
+        bookManager.removeBooksByAuthor("Alice Johnson");
+        bookManager.removeBooksByAuthor("Bob Smith");
+        bookManager.removeBooksByAuthor("Charlie Brown");
+
+        assertTrue(null != bookManager.listOfAllAuthors());
     }
 
     @Test
@@ -391,8 +538,11 @@ class BookManagerTest {
     }
 
     @Test
-    @Disabled("TODO: Додати тест на видалення всіх книг")
+        //Додати тест на видалення всіх книг")
     void shouldHandleRemovalOfAllBooks() {
-        fail("Not implemented yet");
+        bookManager.removeAllBooks();
+
+        assertTrue(bookManager.getBooks().isEmpty());
+        assertEquals(0, bookManager.size());
     }
 }

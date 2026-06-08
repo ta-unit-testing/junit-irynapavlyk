@@ -64,6 +64,13 @@ public class BookManager {
                 .collect(Collectors.toList());
     }
 
+    public List<Book> findBooksByTitle(String title) {
+        if (title == null || title.isBlank()) throw new IllegalArgumentException("Title cannot be null or empty");
+        return books.stream()
+                .filter(b -> b.getTitle().equalsIgnoreCase(title))
+                .collect(Collectors.toList());
+    }
+
     public void removeBooksByAuthor(String author) {
         if (author == null || author.isBlank()) throw new IllegalArgumentException("Author cannot be null or empty");
         books.removeIf(b -> b.getAuthor().equalsIgnoreCase(author));
@@ -101,5 +108,13 @@ public class BookManager {
 
     public int size() {
         return books.size();
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void removeAllBooks() {
+        books.clear();
     }
 }
